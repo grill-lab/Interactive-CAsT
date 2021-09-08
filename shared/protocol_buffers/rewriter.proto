@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message RewriteRequest {
+    string search_query = 1;
+    string query_context = 2;
+    Rewriter rewriter = 3;
+    enum Rewriter {
+        T5 = 0;
+    }
+    
+}
+
+message RewriteResult {
+    string rewrite = 1;
+}
+
+service Rewriter {
+    rpc rewrite(RewriteRequest) returns (RewriteResult) {}
+}

@@ -5,7 +5,6 @@ from search_result_pb2 import SearchResult, Document, Passage
 
 from bs4 import BeautifulSoup as bs
 import lxml
-import re
 
 class PyseriniSearcher(AbstractSearcher):
 

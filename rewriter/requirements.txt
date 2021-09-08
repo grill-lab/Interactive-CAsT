@@ -1,0 +1,6 @@
+--find-links https://download.pytorch.org/whl/torch_stable.html
+transformers
+torch==1.9.0+cu111
+sentencepiece
+grpcio
+grpcio_tools

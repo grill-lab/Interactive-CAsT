@@ -1,0 +1,17 @@
+syntax = "proto3";
+import "search_result.proto";
+
+message RerankRequest {
+    string search_query = 1;
+    SearchResult search_result = 2;
+    int32 num_passages = 3;
+    Reranker reranker = 4;
+    enum Reranker {
+        T5 = 0;
+        BERT = 1;
+    }
+}
+
+service Reranker {
+    rpc rerank(RerankRequest) returns (SearchResult) {}
+}
