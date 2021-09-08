@@ -1,0 +1,3 @@
+from .kilt_trecweb_converter import KILTTrecwebConverter
+from .marco_trecweb_converter import MarcoTrecwebConverter
+from .wapo_trecweb_converter import WapoTrecwebConverter

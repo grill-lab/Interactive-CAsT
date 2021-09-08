@@ -1,0 +1,5 @@
+beautifulsoup4==4.9.3
+pyserini
+grpcio
+grpcio_tools
+lxml

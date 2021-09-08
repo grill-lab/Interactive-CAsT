@@ -1,0 +1,11 @@
+test
+*.pyc
+*.pyo
+
+/shared/indexes
+/shared/compiled_protobufs/*
+
+/offline/data/collections/*
+/offline/data/duplicates_files/*
+/offline/data/index_candidates/*
+/offline/data/processed_trecweb/*

@@ -1,0 +1,25 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+//basic unit of a search result is a passage
+message Passage {
+    string id = 1;
+    string body = 2;
+    float score = 3; //score given after reranking
+}
+
+//multiple passages make up a Document
+message Document {
+    string id = 1;
+    string url = 2;
+    string title = 3;
+    repeated Passage passages = 4;
+    float score = 5; //score given after first pass retrieval
+}
+
+//multiple documents make up a search result, first pass retrieval
+message SearchResult {
+    google.protobuf.Timestamp time_taken = 1; //how long the search took
+    repeated Document documents = 2; //documents retrieved  
+} 
+

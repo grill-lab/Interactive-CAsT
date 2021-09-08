@@ -1,0 +1,30 @@
+syntax = "proto3";
+import "search_result.proto";
+
+message SearchParameters {
+    enum Collection {
+        ALL = 0;
+        KILT = 1;
+        MARCO = 2;
+        WAPO = 3;
+    }
+    Collection collection = 1;
+    map <string, string> parameters = 2; // other query parameters that may come up
+}
+
+
+message SearchQuery {
+    string query = 1;
+    int32 num_hits = 2;
+    SearchParameters search_parameters = 4;
+}
+
+message DocumentQuery {
+    string document_id =1;
+}
+
+
+service Searcher {
+    rpc search(SearchQuery) returns (SearchResult) {}
+    rpc get_document(DocumentQuery) returns (Document) {}
+}
