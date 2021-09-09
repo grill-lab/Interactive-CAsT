@@ -9,10 +9,6 @@ class NeuralRewriter(AbstractRewriter):
 
     def __init__(self) -> None:
 
-        # local_t5_model_path = '/shared/models/t5_rewriter'
-        # t5_huggingface_path = "castorini/t5-base-canard"
-
-
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.rewriters = {
             # other rewriters go here
