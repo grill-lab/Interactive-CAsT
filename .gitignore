@@ -60,6 +60,7 @@ test
 # indexes and protobufs in shared directory
 /shared/indexes
 /shared/compiled_protobufs/*
+/shared/models
 
 
 # generated and downloaded offline data

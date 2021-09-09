@@ -3,17 +3,22 @@ from rewriter_pb2 import RewriteRequest, RewriteResult
 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import torch
+import os
 
 class NeuralRewriter(AbstractRewriter):
 
     def __init__(self) -> None:
 
+        # local_t5_model_path = '/shared/models/t5_rewriter'
+        # t5_huggingface_path = "castorini/t5-base-canard"
+
+
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.rewriters = {
             # other rewriters go here
             "T5": {
-                "model": AutoModelForSeq2SeqLM.from_pretrained("castorini/t5-base-canard").to(self.device),
-                "tokenizer": AutoTokenizer.from_pretrained("castorini/t5-base-canard")
+                "model": AutoModelForSeq2SeqLM.from_pretrained("castorini/t5-base-canard", cache_dir="/shared/models/t5_rewriter").to(self.device),
+                "tokenizer": AutoTokenizer.from_pretrained("castorini/t5-base-canard", cache_dir="/shared/models/t5_rewriter")
             }
         }
 
@@ -36,3 +41,7 @@ class NeuralRewriter(AbstractRewriter):
         
 
         return rewrite_result
+
+
+
+

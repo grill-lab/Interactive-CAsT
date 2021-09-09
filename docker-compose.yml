@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  builder:
+    container_name: builder
+    build:
+      context: builder
+      dockerfile: Dockerfile
+    volumes:
+      - ./builder:/source
+      - ./shared:/shared
+  
+  reranker:
+    container_name: reranker
+    build:
+      context: reranker
+      dockerfile: Dockerfile
+    volumes:
+    - ./reranker:/source
+    - ./shared:/shared
+    depends_on:
+      - builder
+      - searcher
+      - rewriter
+  
+  rewriter:
+    container_name: rewriter
+    build:
+      context: rewriter
+      dockerfile: Dockerfile
+    volumes:
+    - ./rewriter:/source
+    - ./shared:/shared
+    depends_on:
+      - builder
+  
+  searcher:
+    container_name: searcher
+    build:
+      context: searcher
+      dockerfile: Dockerfile
+    volumes:
+    - ./searcher:/source
+    - ./shared:/shared
+    depends_on:
+      - builder
+  
+  web_ui:
+    container_name: web_ui
+    build:
+      context: web_ui
+      dockerfile: Dockerfile
+    volumes:
+    - ./web_ui:/source
+    - ./shared:/shared
+    depends_on:
+      - builder
+      - searcher
+      - rewriter
+      - reranker

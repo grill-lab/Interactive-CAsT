@@ -45,11 +45,13 @@ def create_trecweb_entry(idx: str, url: str, title: str, body: str) -> str:
     
     return content
 
-def write_documents_to_file(collection_path: str, collection_name : str, converter, passage_chunker, document_count: int, duplicates_file_path: str = None):
+def write_documents_to_file(collection_path: str, collection_name : str, converter, passage_chunker, document_count: int, duplicates_file_path: str = None, num_documents = None):
 
     """
     Single interface to write documents to the final trecweb file.
     """
+
+    count = 0
 
     duplicates_lookup_dict = None
     if duplicates_file_path:
@@ -85,3 +87,10 @@ def write_documents_to_file(collection_path: str, collection_name : str, convert
                 passage_splits = add_passage_ids(passages)
                 trecweb_entry = create_trecweb_entry(doc_id, doc_url, doc_title, passage_splits)
                 trecweb_file.write(trecweb_entry)
+
+                
+                if num_documents:
+                    # process only the user specified number of documents
+                    count += 1
+                    if count >= num_documents:
+                        break

@@ -19,6 +19,8 @@ parser.add_argument('--wapo_duplicates', type=str, default="./data/duplicates_fi
 parser.add_argument('--passage_chunker', type=str, default="spacy", help="Passage Chunker, spacy or regex")
 parser.add_argument('--max_passage_size', type=int, default=250, help="Max passage size: int")
 
+parser.add_argument('--document_count', type=int, default=None, help="Number of documents to process per collection")
+
 parser.add_argument('--skip_process_all', default=False, action='store_true')
 parser.add_argument('--skip_process_kilt', default=False, action='store_true')
 parser.add_argument('--skip_process_marco', default=False, action='store_true')
@@ -53,7 +55,7 @@ if __name__ == '__main__':
     if not args.skip_process_kilt:
         print("Processing KILT...")
         kilt_trecweb_converter: KILTTrecwebConverter = KILTTrecwebConverter()
-        write_documents_to_file(args.kilt_collection, 'kilt', kilt_trecweb_converter, passage_chunker, 5903530)
+        write_documents_to_file(args.kilt_collection, 'kilt', kilt_trecweb_converter, passage_chunker, 5903530, num_documents=args.document_count)
 
         if not args.skip_indexing:
             print("Indexing the KILT trecweb file..")
@@ -64,7 +66,7 @@ if __name__ == '__main__':
     if not args.skip_process_marco:
         print("Processing MARCO...")
         marco_trecweb_converter: MarcoTrecwebConverter = MarcoTrecwebConverter()
-        write_documents_to_file(args.marco_collection, 'marco', marco_trecweb_converter, passage_chunker, 3213835, args.marco_duplicates)
+        write_documents_to_file(args.marco_collection, 'marco', marco_trecweb_converter, passage_chunker, 3213835, args.marco_duplicates, num_documents=args.document_count)
 
         if not args.skip_indexing:
             print("Indexing the MARCO trecweb file..")
@@ -75,7 +77,7 @@ if __name__ == '__main__':
     if not args.skip_process_wapo:
         print("Processing WaPo..")
         wapo_trecweb_converter: WapoTrecwebConverter = WapoTrecwebConverter()
-        write_documents_to_file(args.wapo_collection, 'wapo', wapo_trecweb_converter, passage_chunker, 728626, args.wapo_duplicates)
+        write_documents_to_file(args.wapo_collection, 'wapo', wapo_trecweb_converter, passage_chunker, 728626, args.wapo_duplicates, num_documents=args.document_count)
 
         if not args.skip_indexing:
             print("Indexing the WaPo trecweb file..")
@@ -88,19 +90,19 @@ if __name__ == '__main__':
         if not os.path.isfile("./data/processed_trecweb/kilt.trecweb"):
             print("Processing KILT...")
             kilt_trecweb_converter: KILTTrecwebConverter = KILTTrecwebConverter()
-            write_documents_to_file(args.kilt_collection, 'kilt', kilt_trecweb_converter, passage_chunker, 5903530)
+            write_documents_to_file(args.kilt_collection, 'kilt', kilt_trecweb_converter, passage_chunker, 5903530, num_documents=args.document_count)
         
         #check if marco has been processed, if not process it.
         if not os.path.isfile("./data/processed_trecweb/marco.trecweb"):
             print("Processing Marco...")
             marco_trecweb_converter: MarcoTrecwebConverter = MarcoTrecwebConverter()
-            write_documents_to_file(args.marco_collection, 'marco', marco_trecweb_converter, passage_chunker, 3213835, args.marco_duplicates)
+            write_documents_to_file(args.marco_collection, 'marco', marco_trecweb_converter, passage_chunker, 3213835, args.marco_duplicates, num_documents=args.document_count)
         
         #check if wapo has been processed, if not, process it
         if not os.path.isfile("./data/processed_trecweb/wapo.trecweb"):
             print("Processing WaPo...")
             wapo_trecweb_converter: MarcoTrecwebConverter = MarcoTrecwebConverter()
-            write_documents_to_file(args.wapo_collection, 'marco', wapo_trecweb_converter, passage_chunker, 3213835, args.wapo_duplicates)
+            write_documents_to_file(args.wapo_collection, 'marco', wapo_trecweb_converter, passage_chunker, 3213835, args.wapo_duplicates, num_documents=args.document_count)
 
         
         #no need to copy over files since directory has all we need
