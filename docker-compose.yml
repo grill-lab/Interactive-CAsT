@@ -21,7 +21,6 @@ services:
     depends_on:
       - builder
       - searcher
-      - rewriter
   
   rewriter:
     container_name: rewriter
@@ -50,11 +49,14 @@ services:
     build:
       context: web_ui
       dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - SEARCHER_URL=searcher:8000
+      - REWRITER_URL=rewriter:8000
+      - RERANKER_URL=reranker:8000
     volumes:
     - ./web_ui:/source
     - ./shared:/shared
     depends_on:
-      - builder
-      - searcher
-      - rewriter
       - reranker

@@ -8,4 +8,4 @@ RUN pip3 install -r /requirements.txt
 
 WORKDIR /source
 
-CMD bash
+CMD python3 -u main.py
