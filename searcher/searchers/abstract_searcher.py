@@ -17,12 +17,3 @@ class AbstractSearcher(ABC, SearcherServicer):
         """
 
         pass
-
-    @abstractmethod
-    def convert_search_response(self, search_hits):
-        """
-        Takes the results from a search backend and converts it to 
-        the Document protocol buffer.
-        """
-
-        pass

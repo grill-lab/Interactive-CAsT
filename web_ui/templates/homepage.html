@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>CAsT Search</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="header animate__animated animate__backInDown">
+        <img src="{{ url_for('static', filename='logo.png') }}" id="logo_hero" /><br />
+        <input type="text" class="searchbar" id="searchbar_hero" />
+        <select name="collection" id="collection">
+            <option value="ALL">ALL</option>
+            <option value="KILT">KILT</option>
+            <option value="WAPO">WAPO</option>
+            <option value="MARCO">MARCO</option>
+            <!-- Add new indices here -->
+        </select>
+        <select name="search_backend" id="search_backend">
+            <!-- <option value="solr">Solr</option> -->
+            <option value="pyserini">Pyserini</option>
+            <!-- Add new search backends here -->
+        </select>
+        <select name="reranker" id="reranker">
+            <option value="T5">T5</option>
+            <option value="BERT">BERT</option>
+            <!-- Add new rerankers here -->
+        </select>
+        <input type="checkbox" id="skip_rerank" name="use_titles" checked>
+        <label for="skip_rerank">Skip Rerank</label>
+
+
+    </div>
+
+    <div class=" buttons animate__animated animate__backInDown">
+        <button id="search_btn_hero" class="btn animate__animated">Search</button>
+        <button id="rewrite_btn_hero" class="btn animate__animated">Rewrite</button>
+        <button id="rewrite_raw_btn_hero" class="btn animate__animated">Rewrite with Raw Context</button>
+        <button id="rewrite_logs" class="btn animate__animated">Download Rewrite Logs</button>
+    </div>
+    <div id='rerank_options' class="options animate__animated animate__backInDown">
+        <label> Num docs: <input id="num_docs" class="searchbar" size="1" value="50" /></label>
+        <label> Passage count: <input id="passage_count" class="searchbar" size="1" value="3" /></label>
+        <label> Passage Limit/Doc: <input id="passage_limit" class="searchbar" size="1" value="20" /></label>
+    </div>
+    <div class='options animate__animated animate__backInDown'>
+        <label> K1 (BM25): <input id="k1_bm25" class="searchbar" size="1" value="4.46" /></label>
+        <label> B (BM25): <input id="b_bm25" class="searchbar" size="1" value="0.82" /></label>
+    </div>
+
+    <div class="header animate__animated animate__backInDown" id="parent_context_div">
+        <textarea id="contextfield_hero" class="searchbar" rows="4" cols="100"
+            placeholder="Queries, passages, and turns should be separated with ||| or ... copy and paste in text following the CAsT topic format"></textarea>
+    </div>
+    <div id='rewrite_options' class="options animate__animated animate__backInDown">
+        <label> # of Previous Results: <input id="turns_to_use" class="searchbar" size="1" value="3" /></label>
+        <select name="rewriter" id="rewriter">
+            <option value="T5">T5</option>
+            <!-- Add new rewriters here -->
+        </select>
+    </div>
+
+    <div class="footer"><a href="http://www.treccast.ai">TREC CAsT</a> &bull; 2021</div>
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='csv.js') }}"></script>
+<script src="{{ url_for('static', filename='homepage.js') }}"></script>
+
+</html>

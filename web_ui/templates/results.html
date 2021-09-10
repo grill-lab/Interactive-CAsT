@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>CAsT Search</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="header_top">
+        <img src="{{ url_for('static', filename='logo.png') }}" id="logo_top" />
+        <input type="text" class="searchbar" id="searchbar_top" value="{{query}}"/>
+        <button id="search_btn_top" class="btn">Search</button>
+        <button id="download_trec_eval" class="btn">Download TREC Eval</button>
+        <button id="download_search_results" class="btn">Download Search Results</button>
+    </div>
+
+    <div class="results">
+        <div class="flaunt">
+            Found <span id="results_num">{{ numFound }}</span> results in <span id="results_time">{{ duration }}</span> seconds
+        </div>
+        
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <textarea id="modal_contextfield_hero" class="searchbar" rows="4" cols="125"
+                    placeholder="Query Context..."></textarea>
+
+                <div>
+                    <button id="modal_rewrite_btn_hero" class="btn animate__animated">Rewrite</button>
+                    <button id="modal_rewrite_context_btn_hero" class="btn animate__animated">Rewrite with Raw
+                        Context</button>
+                </div>
+
+            </div>
+
+        </div>
+        <ol class="pages" results='{{docs | tojson | safe}}'>
+            {% for doc in docs %}
+            <li>
+                <div class="page_title">
+                    <a href="{{ doc['id'] }}/fulltext" target="_blank">{{doc['title']}}</a>
+                </div>
+                <div class="page_docid">
+                    ID: {{doc['id'] }} 
+                </div>
+                <div class="page_score">
+                    <em>{{ doc['url'] }} </em>
+                </div>
+                {% for passage in doc['passages'] %}
+                <div>
+                    <div class="page_content">
+                        <strong>Passage ID: {{passage['id']}}</strong>
+                    </div>
+                    <div class="page_content">
+                        Score: {{passage['score']}}
+                    </div>
+                    <div class="page_content">
+                        {{passage['body']}}
+                    </div>
+                </div>
+                {% endfor %}
+            </li>
+            {% endfor %}
+        </ol>
+    </div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='csv.js') }}"></script>
+<script src="{{ url_for('static', filename='results.js') }}"></script>
+
+</html>

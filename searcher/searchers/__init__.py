@@ -1,1 +1,1 @@
-from .pyserini_searcher import PyseriniSearcher
+from .backend_selector import BackendSelector

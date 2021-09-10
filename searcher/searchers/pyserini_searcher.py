@@ -43,7 +43,7 @@ class PyseriniSearcher(AbstractSearcher):
         search_result = SearchResult()
 
         for hit in hits:
-            retrieved_document = self.convert_search_response(hit)
+            retrieved_document = self.__convert_search_response(hit)
             search_result.documents.append(retrieved_document)
 
         return search_result
@@ -60,12 +60,12 @@ class PyseriniSearcher(AbstractSearcher):
         hit = self.chosen_searcher.doc(document_id)
 
 
-        retrieved_document = self.convert_search_response(hit)
+        retrieved_document = self.__convert_search_response(hit)
 
         return retrieved_document
 
     
-    def convert_search_response(self, hit):
+    def __convert_search_response(self, hit):
 
         retrieved_document = Document()
         soup = None

@@ -8,7 +8,9 @@ class MarcoTrecwebConverter(AbstractTrecwebConverter):
 
         try:
             idx, url, title, body = document.strip().split('\t')
+            idx = "MARCO_" + idx
             return idx, url, title, body
+            
         except ValueError:
             #print("Either the id, url, title or body is missing")
             return None

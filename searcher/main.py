@@ -6,7 +6,7 @@ sys.path.insert(0, '/shared/compiled_protobufs')
 import grpc
 from concurrent import futures
 
-from searchers import PyseriniSearcher as SearcherServicer
+from searchers import BackendSelector as SearcherServicer
 from searcher_pb2_grpc import add_SearcherServicer_to_server
 
 def serve():

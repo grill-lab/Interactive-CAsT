@@ -16,11 +16,18 @@ message SearchParameters {
 message SearchQuery {
     string query = 1;
     int32 num_hits = 2;
+    SearchBackend search_backend = 3;
     SearchParameters search_parameters = 4;
+    
 }
 
 message DocumentQuery {
     string document_id =1;
+    SearchBackend search_backend = 2;
+}
+
+enum SearchBackend {
+    PYSERINI = 0;
 }
 
 
