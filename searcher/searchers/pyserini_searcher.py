@@ -38,6 +38,10 @@ class PyseriniSearcher(AbstractSearcher):
         if search_query.search_parameters.collection == 3:
             self.chosen_searcher = self.indexes['WAPO']
         
+        bm25_b = search_query.search_parameters.parameters["b"]
+        bm25_k1 = search_query.search_parameters.parameters["k1"]
+        
+        self.chosen_searcher.set_bm25(float(bm25_k1), float(bm25_b))
         hits = self.chosen_searcher.search(query, num_hits)
 
         search_result = SearchResult()
@@ -58,7 +62,6 @@ class PyseriniSearcher(AbstractSearcher):
         self.chosen_searcher = self.indexes[index]
 
         hit = self.chosen_searcher.doc(document_id)
-
 
         retrieved_document = self.__convert_search_response(hit)
 

@@ -1,8 +1,6 @@
 # Builder
 
-This service compiles the protocol buffers and grpc services that the online system uses.
-
-# How to run
+This service compiles the protocol buffers and grpc services that the online system uses. TO run in isolation for testing purposes:
 
 1. Build the docker image:
 
