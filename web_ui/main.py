@@ -99,7 +99,7 @@ def search():
         duration = int(end_time - start_time)
         
         return render_template("results.html", docs = documents, 
-            numFound=search_query.num_hits, duration=duration, query=search_query.query)
+            numFound=len(documents), duration=duration, query=search_query.query)
     
     rerank_request = RerankRequest()
     rerank_request.search_query = search_query.query
@@ -119,7 +119,7 @@ def search():
     duration = int(end_time - start_time)
         
     return render_template("results.html", docs = documents, 
-        numFound=search_query.num_hits, duration=duration, query=search_query.query)
+        numFound=len(documents), duration=duration, query=search_query.query)
 
 
 @app.route('/rewrite', methods=['POST'])

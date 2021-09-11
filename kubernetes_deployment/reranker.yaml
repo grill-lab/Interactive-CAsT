@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reranker
+  labels:
+    app: reranker
+spec:
+  selector:
+    matchLabels:
+      app: reranker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reranker
+    spec:
+      containers:
+      - name: reranker
+        imagePullPolicy: Never
+        image: cast-searcher-reranker-image:latest
+        volumeMounts:
+          - mountPath: /shared
+            name: persistent-storage
+      volumes:
+      - name: persistent-storage
+        hostPath:
+          path: /shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reranker
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: reranker

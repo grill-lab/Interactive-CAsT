@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-ui
+  labels:
+    app: web-ui
+spec:
+  selector:
+    matchLabels:
+      app: web-ui
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web-ui
+    spec:
+      containers:
+      - name: web-ui
+        imagePullPolicy: Never
+        image: cast-searcher-web-ui-image:latest
+        env:
+        - name: SEARCHER_URL
+          value: searcher:8000
+        - name: REWRITER_URL
+          value: rewriter:8000
+        - name: RERANKER_URL
+          value: reranker:8000
+        volumeMounts:
+          - mountPath: /shared
+            name: persistent-storage
+      volumes:
+      - name: persistent-storage
+        hostPath:
+          path: /shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-ui
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: web-ui

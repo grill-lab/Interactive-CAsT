@@ -1,11 +1,11 @@
-version: "3.9"
+version: "3"
 
 services:
   builder:
     container_name: builder
     build:
-      context: builder
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: builder/Dockerfile
     volumes:
       - ./builder:/source
       - ./shared:/shared
@@ -13,8 +13,8 @@ services:
   reranker:
     container_name: reranker
     build:
-      context: reranker
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: reranker/Dockerfile
     volumes:
     - ./reranker:/source
     - ./shared:/shared
@@ -25,8 +25,8 @@ services:
   rewriter:
     container_name: rewriter
     build:
-      context: rewriter
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: rewriter/Dockerfile
     volumes:
     - ./rewriter:/source
     - ./shared:/shared
@@ -36,8 +36,8 @@ services:
   searcher:
     container_name: searcher
     build:
-      context: searcher
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: searcher/Dockerfile
     volumes:
     - ./searcher:/source
     - ./shared:/shared
@@ -47,8 +47,8 @@ services:
   web_ui:
     container_name: web_ui
     build:
-      context: web_ui
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: web_ui/Dockerfile
     ports:
       - "5000:5000"
     environment:

@@ -2,9 +2,9 @@ FROM python:slim
 
 RUN pip3 install --upgrade pip
 
-COPY requirements.txt /requirements.txt
+COPY web_ui/ /source
 
-RUN pip3 install -r /requirements.txt
+RUN pip3 install -r source/requirements.txt
 
 WORKDIR /source
 

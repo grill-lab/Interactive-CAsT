@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rewriter
+  labels:
+    app: rewriter
+spec:
+  selector:
+    matchLabels:
+      app: rewriter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rewriter
+    spec:
+      containers:
+      - name: rewriter
+        imagePullPolicy: Never
+        image: cast-searcher-rewriter-image:latest
+        volumeMounts:
+          - mountPath: /shared
+            name: persistent-storage
+      volumes:
+      - name: persistent-storage
+        hostPath:
+          path: /shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rewriter
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: rewriter

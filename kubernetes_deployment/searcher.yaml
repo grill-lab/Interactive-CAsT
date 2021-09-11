@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: searcher
+  labels:
+    app: searcher
+spec:
+  selector:
+    matchLabels:
+      app: searcher
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: searcher
+    spec:
+      containers:
+      - name: searcher
+        imagePullPolicy: Never
+        image: cast-searcher-searcher-image:latest
+        volumeMounts:
+          - mountPath: /shared
+            name: persistent-storage
+      volumes:
+      - name: persistent-storage
+        hostPath:
+          path: /shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: searcher
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: searcher

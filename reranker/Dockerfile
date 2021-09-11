@@ -30,11 +30,11 @@ RUN apt-get install -y curl
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-COPY requirements.txt /requirements.txt
+COPY reranker/ /source
 
-COPY rerankers/pygaggle/requirements.txt /pygaggle_requirements.txt
+RUN pip3 install -r source/requirements.txt -r source/rerankers/pygaggle/requirements.txt
 
-RUN pip3 install -r /requirements.txt -r /pygaggle_requirements.txt
+COPY reranker/ /source
 
 WORKDIR /source
 
