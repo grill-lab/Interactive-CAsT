@@ -1,4 +1,4 @@
-# CastSearcher 2.0
+# CAsTSearcher 2.0
 
 CAsT Searcher is a simple tool developed to help with creating the evaluation topics for the 2021 edition of the [Conversational Assistance Track](http://www.treccast.ai/). The tool allows topic developers to visually assess the behaviour of a retrieval system, ultimately making it easier to develop challenging, but interesting, topics for the Track.
 
