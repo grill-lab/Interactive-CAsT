@@ -34,6 +34,8 @@ The services are dockerfied and orchestrated with docker compose. To interact wi
 
 `docker-compose up --build`
 
+(NOTE: Reranking is slow, especially when reranking lots of documents!)
+
 ------------------------
 
 To run with kubernetes on minikube:
