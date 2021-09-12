@@ -33,3 +33,18 @@ First, make sure to run the offline pipeline to generate the indexes the online 
 The services are dockerfied and orchestrated with docker compose. To interact with the app, run:
 
 `docker-compose up --build`
+
+------------------------
+
+To run with kubernetes on minikube:
+
+1. Start minikube: `minikube start`
+2. Open the minikube dashboard to monitor the app's resources: `minikube dashboard`
+3. To allow minikube expose the LoadBalancer web UI service to allow access: `minikube tunnel` 
+4. Mount the shared directory on minikube: `minikube mount shared:/shared`
+
+In the `kubernetes_deplpoyment` directory, run `bash build_images.sh` to build the app's images within the minikube environment.
+
+Then create the resources for the app with `kubectl apply -f .`
+
+If all goes well, the endpoint to access the web UI should then be available in the minikube dashboard within the Services menu.
