@@ -34,7 +34,7 @@ The services are dockerfied and orchestrated with docker compose. To interact wi
 
 `docker-compose up --build`
 
-(NOTE: Reranking is slow, as it runs on CPU -- especially when reranking lots of documents!)
+(NOTE: Reranking is slow, if running on CPU -- especially when reranking lots of documents!)
 
 ------------------------
 
