@@ -39,4 +39,6 @@ The files generated from the Trecweb Conversion step are used to create a lucene
 
 `docker run -it -v $PWD/../shared:/shared -v $PWD:/source cast-searcher-offline-image bash`
 
-4. Finally, run `python3 main.py` to kick off the pipeline. If using the Spacy Passage Chunker on the entire corpus, it will take roughly 10 hours to complete depending on the resources available on the machine where it is run. You pass in arguments to the script to customize how it is run. Possible arguments can be found in lines 10 - 32 of the `main.py` file.  
+4. Finally, run `python3 main.py` to kick off the pipeline. If using the Spacy Passage Chunker on the entire corpus, it will take roughly 10 hours to complete depending on the compute resources available on your machine where it is run. 
+
+You can pass in arguments to the script to customize how it is run too. Possible arguments can be found in lines 10 - 32 of the `main.py` file.  For example, if you only want to generate the .trecweb file for each collection but not index them, do `python3 main.py --skip-indexing`.
