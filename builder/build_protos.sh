@@ -1,5 +1,7 @@
 #!/bin/sh
 
+mkdir -p /shared/compiled_protobufs
+
 ls /shared/protocol_buffers | \
 grep .proto | \
 xargs python3 -m grpc_tools.protoc \

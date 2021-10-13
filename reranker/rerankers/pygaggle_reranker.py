@@ -28,7 +28,9 @@ class PygaggleReranker(AbstractReranker):
 
         search_result = SearchResult()
 
-        parsed_passages, lookup_dictionary = self.__create_reranker_input(first_pass_search_result, num_passages_to_rerank)
+        parsed_passages, lookup_dictionary = self.__create_reranker_input(
+            first_pass_search_result, num_passages_to_rerank
+        )
 
         texts = [ Text(passage[1], {'id': passage[0]}, 0) for passage in parsed_passages]
 
