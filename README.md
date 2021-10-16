@@ -2,7 +2,7 @@
 
 CAsT Searcher is a simple tool developed to help with creating the evaluation topics for the 2021 edition of the [Conversational Assistance Track](http://www.treccast.ai/). The tool allows topic developers to visually assess the behaviour of a retrieval system, ultimately making it easier to develop challenging, but interesting, topics for the Track.
 
-CAsT Searcher is designed to be as modular and extensible as possible. It is built using a microservice architecture, with loosely coupled services that communicate with each other through protocol buffers and grpc. 
+CAsT Searcher is designed to be as modular and extensible as possible. It is built using a microservice architecture, with loosely coupled services that communicate through protocol buffers and grpc. 
 
 ## Architecture
 
