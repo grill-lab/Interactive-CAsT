@@ -30,9 +30,11 @@ RUN apt-get install -y curl
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-COPY rewriter/ /source
+COPY rewriter/requirements.txt /source/requirements.txt
 
 RUN pip3 install -r source/requirements.txt
+
+COPY rewriter/ /source
 
 WORKDIR /source
 

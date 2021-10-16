@@ -31,9 +31,11 @@ RUN apt-get install -y curl
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-COPY searcher/ /source
+COPY searcher/requirements.txt /source/requirements.txt
 
 RUN pip3 install -r source/requirements.txt
+
+COPY searcher/ /source
 
 WORKDIR /source
 
