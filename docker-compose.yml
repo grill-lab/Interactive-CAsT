@@ -21,6 +21,13 @@ services:
     depends_on:
       - builder
       - searcher
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
   
   rewriter:
     container_name: rewriter
@@ -32,6 +39,13 @@ services:
     - ./shared:/shared
     depends_on:
       - builder
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
   
   searcher:
     container_name: searcher

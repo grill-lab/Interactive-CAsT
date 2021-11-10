@@ -28,6 +28,10 @@ The `rewriter` handles query rewrites. It takes in a search query along with rel
 
 ## How to Run
 
+Clone the repository:
+
+`git clone --recurse-submodules -j8 https://github.com/grill-lab/CAsTSearcher.git`
+
 First, make sure to run the offline pipeline to generate the indexes the online system needs to search on. Details of how to do that can be found in the `offline` directory.
 
 The services are dockerfied and orchestrated with docker compose. To interact with the app, run:
