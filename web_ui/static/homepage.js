@@ -4,7 +4,7 @@ var G_numDocs = "#num_docs";
 var G_passageCount = "#passage_count";
 var G_passageLimit = "#passage_limit";
 var G_collection = "#collection";
-var G_backend = "#search_backend";
+var G_searcherType = "#searcher_type";
 var G_reranker = "#reranker";
 var G_rewriter = "#rewriter";
 var G_context = "#contextfield_hero";
@@ -23,7 +23,7 @@ $(G_searchButton).click(function () {
     var numDocs = $(G_numDocs).val();
     var passageCount = $(G_passageCount).val();
     var passageLimit = $(G_passageLimit).val();
-    var backend = $(G_backend).val();
+    var searcherType = $(G_searcherType).val();
     var collection = $(G_collection).val();
     var reranker = $(G_reranker).val()
     var skipRerank = $(G_skip_rerank).is(':checked').toString();
@@ -38,7 +38,7 @@ $(G_searchButton).click(function () {
     searchQuery = searchQuery.replaceAll(" ", "_");
     var url = `/search?query=${searchQuery}&numDocs=${numDocs}
     &passageCount=${passageCount}&passageLimit=${passageLimit}
-    &backend=${backend}&collection=${collection}&reranker=${reranker}
+    &searcherType=${searcherType}&collection=${collection}&reranker=${reranker}
     &skipRerank=${skipRerank}&b=${b}&k1=${k1}`;
     window.location.href = url
 });

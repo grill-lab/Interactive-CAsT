@@ -64,7 +64,11 @@
                         Score: {{passage['score']}}
                     </div>
                     <div class="page_content">
-                        {{passage['body']}}
+                        {% if passage['body']|length > 1250 %}
+                            {{passage['body'][:1250]}}....
+                        {% else %}
+                            {{passage['body']}}
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}

@@ -3,7 +3,7 @@ import os
 
 import time
 import json
-
+import logging
 import sys
 import grpc
 
@@ -48,7 +48,7 @@ def display_doc(id):
 
     if args.get("search_backend"):
         if args["search_backend"] == "pyserini":
-            document_query.search_backend = 0
+            document_query.searcher_type = 0
     
     document_query.document_id = id
     retrieved_document = search_client.get_document(document_query)
@@ -70,17 +70,23 @@ def search():
     search_query.search_parameters.parameters["b"] = args["b"]
     search_query.search_parameters.parameters["k1"] = args["k1"]
 
-    if args["backend"] == "Pyserini":
-        search_query.search_backend = 0
+    print(args["searcherType"])
+
+    if args["searcherType"] == "sparse":
+        search_query.searcher_type = 0
+    elif args["searcherType"] == "dense":
+        search_query.searcher_type = 1
+    elif args["searcherType"] == "hybrid":
+        search_query.searcher_type = 2
     
     if args["collection"] == "ALL":
         search_query.search_parameters.collection = 0
-    elif args["collection"] == "KILT":
-        search_query.search_parameters.collection = 1
-    elif args["collection"] == "MARCO":
-        search_query.search_parameters.collection = 2
-    elif args["collection"] == "WAPO":
-        search_query.search_parameters.collection = 3
+    # elif args["collection"] == "KILT":
+    #     search_query.search_parameters.collection = 1
+    # elif args["collection"] == "MARCO":
+    #     search_query.search_parameters.collection = 2
+    # elif args["collection"] == "WAPO":
+    #     search_query.search_parameters.collection = 3
 
     start_time = time.time()
     search_result = search_client.search(search_query)

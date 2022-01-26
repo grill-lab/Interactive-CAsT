@@ -17,14 +17,16 @@
         <input type="text" class="searchbar" id="searchbar_hero" />
         <select name="collection" id="collection">
             <option value="ALL">ALL</option>
-            <option value="KILT">KILT</option>
+            <!-- <option value="KILT">KILT</option>
             <option value="WAPO">WAPO</option>
-            <option value="MARCO">MARCO</option>
+            <option value="MARCO">MARCO</option> -->
             <!-- Add new indices here -->
         </select>
-        <select name="search_backend" id="search_backend">
+        <select name="searcher_type" id="searcher_type">
             <!-- <option value="solr">Solr</option> -->
-            <option value="pyserini">Pyserini</option>
+            <option value="sparse">Sparse</option>
+            <option value="dense">Dense</option>
+            <option value="hybrid">Hybrid</option>
             <!-- Add new search backends here -->
         </select>
         <select name="reranker" id="reranker">

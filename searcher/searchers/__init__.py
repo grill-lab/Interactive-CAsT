@@ -1,1 +1,1 @@
-from .backend_selector import BackendSelector
+from .searcher_selector import SearcherSelector

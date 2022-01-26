@@ -4,9 +4,9 @@ import "search_result.proto";
 message SearchParameters {
     enum Collection {
         ALL = 0;
-        KILT = 1;
-        MARCO = 2;
-        WAPO = 3;
+        KILT = 1 [deprecated=true];
+        MARCO = 2 [deprecated=true];
+        WAPO = 3 [deprecated=true];
     }
     Collection collection = 1;
     map <string, string> parameters = 2; // other query parameters that may come up
@@ -16,18 +16,20 @@ message SearchParameters {
 message SearchQuery {
     string query = 1;
     int32 num_hits = 2;
-    SearchBackend search_backend = 3;
+    SearcherType searcher_type = 3;
     SearchParameters search_parameters = 4;
     
 }
 
 message DocumentQuery {
     string document_id =1;
-    SearchBackend search_backend = 2;
+    SearcherType searcher_type = 2;
 }
 
-enum SearchBackend {
-    PYSERINI = 0;
+enum SearcherType {
+    SPARSE = 0;
+    DENSE = 1;
+    HYBRID = 2;
 }
 
 
