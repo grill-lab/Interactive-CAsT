@@ -2,6 +2,7 @@ from .abstract_reranker import AbstractReranker
 from .pygaggle import MonoT5, MonoBERT, Query, Text
 from search_result_pb2 import SearchResult, Document, Passage
 from reranker_pb2 import RerankRequest
+import logging
 
 class PygaggleReranker(AbstractReranker):
 
@@ -29,7 +30,7 @@ class PygaggleReranker(AbstractReranker):
         search_result = SearchResult()
 
         parsed_passages, lookup_dictionary = self.__create_reranker_input(
-            first_pass_search_result, num_passages_to_rerank
+            first_pass_search_result, num_passages_to_rerank, rerank_request.num_docs
         )
 
         texts = [ Text(passage[1], {'id': passage[0]}, 0) for passage in parsed_passages]
@@ -60,12 +61,12 @@ class PygaggleReranker(AbstractReranker):
         return search_result
 
 
-    def __create_reranker_input(self, search_result, num_passages_to_rerank):
+    def __create_reranker_input(self, search_result, num_passages_to_rerank, num_docs):
 
         parsed_passages = []
         lookup_dictionary = {}
 
-        for document in search_result.documents:
+        for document in search_result.documents[:num_docs]:
             for passage in document.passages[:num_passages_to_rerank]:
 
                 passage_list = []

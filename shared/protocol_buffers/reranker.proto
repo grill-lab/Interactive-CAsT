@@ -6,6 +6,7 @@ message RerankRequest {
     SearchResult search_result = 2;
     int32 num_passages = 3;
     Reranker reranker = 4;
+    int32 num_docs = 5;
     enum Reranker {
         T5 = 0;
         BERT = 1;

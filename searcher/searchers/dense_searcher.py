@@ -12,8 +12,10 @@ class DenseSearcher(AbstractSearcher):
 
         self.indexes = {
             # not sure about efficacy of encoders yet.
-            'ALL' : SimpleDenseSearcher('../../shared/indexes/dense/dense_test', 
-                            'castorini/ance-msmarco-doc-firstp')
+            'DOCUMENTS' : SimpleDenseSearcher('../../shared/indexes/dense/dense_doc_index', 
+                            'castorini/ance-msmarco-passage'),
+            # 'ENTITIES' : SimpleDenseSearcher('../../shared/indexes/dense/dense_entity_index', 
+            #                 'castorini/ance-msmarco-passage')
             # new indices go here
         }
 
@@ -25,23 +27,29 @@ class DenseSearcher(AbstractSearcher):
         query: str = search_query.query
         num_hits: int = search_query.num_hits
 
-        logging.info("WE ARE USING THE DENSE SEARCHER")
+        print("WE ARE USING THE DENSE SEARCHER")
 
         # we need a corresponing sparse searcher to retrieve doc attributes
         if search_query.search_parameters.collection == 0:
-            self.chosen_index = self.indexes['ALL']
-            self.sparse_searcher.chosen_index = self.sparse_searcher.indexes['ALL']
+            self.chosen_index = self.indexes['DOCUMENTS']
+            self.sparse_searcher.chosen_index = self.sparse_searcher.indexes['DOCUMENTS']
+        elif search_query.search_parameters.collection == 4:
+            self.chosen_index = self.indexes['ENTITIES']
+            self.sparse_searcher.chosen_index = self.sparse_searcher.indexes['ENTITIES']
         
         hits = self.chosen_index.search(query, num_hits)
         search_result = SearchResult()
 
-        for hit in hits:
-            document_query = DocumentQuery()
-            document_query.document_id = hit.docid
-            document_query.searcher_type = 0
+        document_query = DocumentQuery()
+        document_query.searcher_type = 0
 
-            retrieved_document = self.get_document(document_query, context)
-            search_result.documents.append(retrieved_document)
+        for hit in hits:
+            try:
+                document_query.document_id = hit.docid
+                retrieved_document = self.get_document(document_query, context)
+                search_result.documents.append(retrieved_document)
+            except:
+                continue
 
         return search_result
     
