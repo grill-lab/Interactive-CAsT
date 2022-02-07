@@ -3,10 +3,11 @@ import "search_result.proto";
 
 message SearchParameters {
     enum Collection {
-        ALL = 0;
+        DOCUMENTS = 0;
         KILT = 1 [deprecated=true];
         MARCO = 2 [deprecated=true];
         WAPO = 3 [deprecated=true];
+        ENTITIES = 4;
     }
     Collection collection = 1;
     map <string, string> parameters = 2; // other query parameters that may come up
@@ -24,6 +25,14 @@ message SearchQuery {
 message DocumentQuery {
     string document_id =1;
     SearcherType searcher_type = 2;
+    enum Collection {
+        DOCUMENTS = 0;
+        KILT = 1 [deprecated=true];
+        MARCO = 2 [deprecated=true];
+        WAPO = 3 [deprecated=true];
+        ENTITIES = 4;
+    }
+    Collection collection = 3; // not ideal, but I don't care
 }
 
 enum SearcherType {
