@@ -172,7 +172,7 @@ def get_documents():
             del converted_document["passages"]
             retrieved_documents.append(converted_document)
         except:
-            continue
+            print(f"Doc with id {doc_id} has a missing field")
 
     retrieved_entities = []
     document_query.collection = 4
@@ -185,7 +185,7 @@ def get_documents():
             del converted_document["passages"]
             retrieved_entities.append(converted_document)
         except:
-            continue
+            print(f"Doc with id {entity_id} has a missing field")
     
     return jsonify({
         "documents" : retrieved_documents,

@@ -45,8 +45,11 @@ class SparseSearcher(AbstractSearcher):
         search_result = SearchResult()
 
         for hit in hits:
-            retrieved_document = self.__convert_search_response(hit)
-            search_result.documents.append(retrieved_document)
+            try:
+                retrieved_document = self.__convert_search_response(hit)
+                search_result.documents.append(retrieved_document)
+            except:
+                print(f"Doc with id {hid.docid} has a missing field")
 
         return search_result
 
@@ -81,13 +84,13 @@ class SparseSearcher(AbstractSearcher):
             raw_document = json.loads(hit.raw())
             retrieved_document.id = hit.docid()
 
-        if not raw_document.get("title"):
-            retrieved_document.title = raw_document.get("wikipedia_title")
-        else:
+        if not raw_document.get("wikipedia_title"):
             retrieved_document.title = raw_document.get("title")
-        
-        wiki_title = retrieved_document.title.replace(" ", "_")
-        retrieved_document.url = raw_document.get("url", f"https://en.wikipedia.org/wiki/{wiki_title}")
+            retrieved_document.url = raw_document.get("url")
+        else:
+            retrieved_document.title = raw_document.get("wikipedia_title")
+            wiki_title = retrieved_document.title.replace(" ", "_")
+            retrieved_document.url = raw_document.get("url", f"https://en.wikipedia.org/wiki/{wiki_title}")
         
         # check if we have a passage field
         if not raw_document.get("passage"):

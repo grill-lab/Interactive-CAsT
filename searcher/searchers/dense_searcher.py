@@ -49,7 +49,7 @@ class DenseSearcher(AbstractSearcher):
                 retrieved_document = self.get_document(document_query, context)
                 search_result.documents.append(retrieved_document)
             except:
-                continue
+                 print(f"Doc with id {hid.docid} has a missing field")
 
         return search_result
     
