@@ -1,6 +1,7 @@
 --find-links https://download.pytorch.org/whl/cu113/torch_stable.html
-beautifulsoup4==4.9.3
-pyserini
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl
+spacy
+pyserini==0.16.0
 faiss-cpu
 torch==1.10.1+cu113
 grpcio

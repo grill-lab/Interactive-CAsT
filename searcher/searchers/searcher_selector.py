@@ -1,15 +1,15 @@
 from .abstract_searcher import AbstractSearcher
 from .sparse_searcher import SparseSearcher
-from .dense_searcher import DenseSearcher
-from .hybrid_searcher import SparseDenseSearcher
+# from .dense_searcher import DenseSearcher
+# from .hybrid_searcher import SparseDenseSearcher
 
 class SearcherSelector(AbstractSearcher):
 
     def __init__(self) -> None:
         self.searchers = {
             "SPARSE" : SparseSearcher(),
-            "DENSE" : DenseSearcher(),
-            "HYBRID" : SparseDenseSearcher()
+            # "DENSE" : DenseSearcher(),
+            # "HYBRID" : SparseDenseSearcher()
         }
 
         self.chosen_searcher = None

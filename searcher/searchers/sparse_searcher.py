@@ -1,7 +1,8 @@
 from .abstract_searcher import AbstractSearcher
-from pyserini.search import SimpleSearcher
+from pyserini.search.lucene import LuceneSearcher
 from searcher_pb2 import SearchQuery, DocumentQuery
 from search_result_pb2 import SearchResult, Document, Passage
+from utils.passage_chunkers import PassageChunker
 
 import json
 import logging
@@ -11,7 +12,7 @@ class SparseSearcher(AbstractSearcher):
     def __init__(self):
 
         self.indexes = {
-            'ALL' : SimpleSearcher('../../shared/indexes/sparse/sparse_test'),
+            'ALL' : LuceneSearcher('../../shared/indexes/sparse/sparse_test'),
             # 'KILT' : SimpleSearcher('../../shared/indexes/kilt'),
             # 'MARCO' : SimpleSearcher('../../shared/indexes/marco'),
             # 'WAPO' : SimpleSearcher('../../shared/indexes/wapo')
@@ -19,6 +20,7 @@ class SparseSearcher(AbstractSearcher):
         }
 
         self.chosen_index = None
+        self.passage_chunker = PassageChunker()
     
     def search(self, search_query: SearchQuery, context):
 
@@ -83,21 +85,15 @@ class SparseSearcher(AbstractSearcher):
         
         retrieved_document.title = raw_document['title']
         retrieved_document.url = raw_document['url']
-        
-        # check if we have a passage field
-        if not raw_document.get("passage"):
-            # just one passage
+
+        self.passage_chunker.tokenize_document(raw_document["text"])
+        passages = self.passage_chunker.chunk_document()
+
+        for passage in passages:
             chunked_passage = Passage()
-            chunked_passage.body = raw_document["text"]
-            chunked_passage.id = "1" # there's just one passage
+            chunked_passage.id = str(passage["id"])
+            chunked_passage.body = passage["body"]
             retrieved_document.passages.append(chunked_passage)
-        else:
-            # passage delineated index
-            for idx, passage in enumerate(raw_document["passage"]):
-                chunked_passage = Passage()
-                chunked_passage.id = f"{idx + 1}"
-                chunked_passage.body = passage
-                retrieved_document.passages.append(chunked_passage) 
         
         return retrieved_document
     
