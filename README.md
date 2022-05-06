@@ -36,6 +36,10 @@ The services are dockerfied and orchestrated with docker compose. To interact wi
 
 (NOTE: Reranking is slow, if running on CPU -- especially when reranking lots of documents!)
 
+## DEMO
+
+You can interact with the system [here](http://3.83.54.47:5000/)
+
 ------------------------
 
 To run with kubernetes on minikube:
