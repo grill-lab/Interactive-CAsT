@@ -17,16 +17,16 @@
         <input type="text" class="searchbar" id="searchbar_hero" />
         <select name="collection" id="collection">
             <option value="ALL">ALL</option>
-            <!-- <option value="KILT">KILT</option>
+            <option value="KILT">KILT</option>
             <option value="WAPO">WAPO</option>
-            <option value="MARCO">MARCO</option> -->
+            <option value="MARCO">MARCO</option>
             <!-- Add new indices here -->
         </select>
         <select name="searcher_type" id="searcher_type">
             <!-- <option value="solr">Solr</option> -->
             <option value="sparse">Sparse</option>
-            <option value="dense">Dense</option>
-            <option value="hybrid">Hybrid</option>
+            <!-- <option value="dense">Dense</option>
+            <option value="hybrid">Hybrid</option> -->
             <!-- Add new search backends here -->
         </select>
         <select name="reranker" id="reranker">
@@ -43,13 +43,14 @@
     <div class=" buttons animate__animated animate__backInDown">
         <button id="search_btn_hero" class="btn animate__animated">Search</button>
         <button id="rewrite_btn_hero" class="btn animate__animated">Rewrite</button>
-        <button id="rewrite_raw_btn_hero" class="btn animate__animated">Rewrite with Raw Context</button>
+        <button id="rewrite_raw_btn_hero" class="btn animate__animated">Rewrite Raw</button>
         <button id="rewrite_logs" class="btn animate__animated">Download Rewrite Logs</button>
     </div>
     <div id='rerank_options' class="options animate__animated animate__backInDown">
         <label> Num docs: <input id="num_docs" class="searchbar" size="1" value="50" /></label>
         <label> Passage count: <input id="passage_count" class="searchbar" size="1" value="3" /></label>
-        <label> Passage Limit/Doc: <input id="passage_limit" class="searchbar" size="1" value="20" /></label>
+        <label> Passage limit: <input id="passage_limit" class="searchbar" size="1" value="20" /></label>
+        <label> Passage size (num words): <input id="passage_size" class="searchbar" size="1" value="250" /></label>
     </div>
     <div class='options animate__animated animate__backInDown'>
         <label> K1 (BM25): <input id="k1_bm25" class="searchbar" size="1" value="4.46" /></label>
@@ -61,7 +62,7 @@
             placeholder="Queries, passages, and turns should be separated with ||| or ... copy and paste in text following the CAsT topic format"></textarea>
     </div>
     <div id='rewrite_options' class="options animate__animated animate__backInDown">
-        <label> # of Previous Results: <input id="turns_to_use" class="searchbar" size="1" value="3" /></label>
+        <label> Prior Turn ID: <input id="prior_turn" class="searchbar" size="1" value="3" /></label>
         <select name="rewriter" id="rewriter">
             <option value="T5">T5</option>
             <!-- Add new rewriters here -->

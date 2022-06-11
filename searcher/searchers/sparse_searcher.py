@@ -6,21 +6,28 @@ from utils.passage_chunkers import PassageChunker
 
 import json
 import logging
+import re
 
 class SparseSearcher(AbstractSearcher):
 
     def __init__(self):
 
         self.indexes = {
-            'ALL' : LuceneSearcher('../../shared/indexes/sparse/sparse_test'),
-            # 'KILT' : SimpleSearcher('../../shared/indexes/kilt'),
-            # 'MARCO' : SimpleSearcher('../../shared/indexes/marco'),
-            # 'WAPO' : SimpleSearcher('../../shared/indexes/wapo')
+            'ALL' : LuceneSearcher('../../shared/indexes/sparse/all'),
+            'KILT' : LuceneSearcher('../../shared/indexes/sparse/kilt'),
+            'MARCO' : LuceneSearcher('../../shared/indexes/sparse/marco'),
+            'WAPO' : LuceneSearcher('../../shared/indexes/sparse/wapo')
             # new indices go here
         }
 
         self.chosen_index = None
         self.passage_chunker = PassageChunker()
+        self.passage_size = 250
+    
+    def __clean_text(self, text):
+        CLEANR = re.compile('<.*?>') 
+        cleaned_text = re.sub(CLEANR, '', text)
+        return cleaned_text
     
     def search(self, search_query: SearchQuery, context):
 
@@ -32,17 +39,21 @@ class SparseSearcher(AbstractSearcher):
         if search_query.search_parameters.collection == 0:
             self.chosen_index = self.indexes['ALL']
         
-        # if search_query.search_parameters.collection == 1:
-        #     self.chosen_searcher = self.indexes['KILT']
+        elif search_query.search_parameters.collection == 1:
+            self.chosen_index = self.indexes['KILT']
         
-        # if search_query.search_parameters.collection == 2:
-        #     self.chosen_searcher = self.indexes['MARCO']
+        elif search_query.search_parameters.collection == 2:
+            self.chosen_index = self.indexes['MARCO']
         
-        # if search_query.search_parameters.collection == 3:
-        #     self.chosen_searcher = self.indexes['WAPO']
+        elif search_query.search_parameters.collection == 3:
+            self.chosen_index = self.indexes['WAPO']
         
         bm25_b = search_query.search_parameters.parameters["b"]
         bm25_k1 = search_query.search_parameters.parameters["k1"]
+
+        self.passage_size = int(
+            search_query.search_parameters.parameters["passage_size"]
+        )
         
         self.chosen_index.set_bm25(float(bm25_k1), float(bm25_b))
         hits = self.chosen_index.search(query, num_hits)
@@ -83,11 +94,19 @@ class SparseSearcher(AbstractSearcher):
             raw_document = json.loads(hit.raw())
             retrieved_document.id = hit.docid()
         
-        retrieved_document.title = raw_document['title']
-        retrieved_document.url = raw_document['url']
+        if not raw_document.get('title'):
+            retrieved_document.title = 'No Title'
+        else:
+            retrieved_document.title = raw_document['title']
+        retrieved_document.url = raw_document.get('url', 'No URL')
 
-        self.passage_chunker.tokenize_document(raw_document["text"])
-        passages = self.passage_chunker.chunk_document()
+        passage_text = raw_document["contents"]
+        passage_text = self.__clean_text(passage_text)
+        
+        self.passage_chunker.tokenize_document(passage_text)
+        passages = self.passage_chunker.chunk_document(
+            passage_size=self.passage_size
+        )
 
         for passage in passages:
             chunked_passage = Passage()

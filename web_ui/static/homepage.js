@@ -2,6 +2,7 @@ var G_activeSearchBar = "#searchbar_hero";
 var G_searchButton = "#search_btn_hero"
 var G_numDocs = "#num_docs";
 var G_passageCount = "#passage_count";
+var G_passageSize = "#passage_size";
 var G_passageLimit = "#passage_limit";
 var G_collection = "#collection";
 var G_searcherType = "#searcher_type";
@@ -10,7 +11,7 @@ var G_rewriter = "#rewriter";
 var G_context = "#contextfield_hero";
 var G_rawRewriteButton = "#rewrite_raw_btn_hero";
 var G_rewriteButton = "#rewrite_btn_hero";
-var G_turnsToUse = "#turns_to_use";
+var G_priorTurn = "#prior_turn";
 var G_rewriteLogsButton = "#rewrite_logs";
 var rewriteLogs = [];
 var G_k1 = "#k1_bm25";
@@ -22,6 +23,7 @@ $(G_searchButton).click(function () {
     var searchQuery = $(G_activeSearchBar).val();
     var numDocs = $(G_numDocs).val();
     var passageCount = $(G_passageCount).val();
+    var passageSize = $(G_passageSize).val();
     var passageLimit = $(G_passageLimit).val();
     var searcherType = $(G_searcherType).val();
     var collection = $(G_collection).val();
@@ -37,7 +39,7 @@ $(G_searchButton).click(function () {
 
     searchQuery = searchQuery.replaceAll(" ", "_");
     var url = `/search?query=${searchQuery}&numDocs=${numDocs}
-    &passageCount=${passageCount}&passageLimit=${passageLimit}
+    &passageCount=${passageCount}&passageSize=${passageSize}&passageLimit=${passageLimit}
     &searcherType=${searcherType}&collection=${collection}&reranker=${reranker}
     &skipRerank=${skipRerank}&b=${b}&k1=${k1}`;
     window.location.href = url
@@ -48,9 +50,9 @@ $(G_rawRewriteButton).click(function () {
     var searchQuery = $(G_activeSearchBar).val();
     var context = $(G_context).val();
     var rewriter = $(G_rewriter).val();
-    var turnsToUse = "raw"
+    var prior_turn = "raw"
 
-    requestRewrite(searchQuery, context, rewriter, turnsToUse)
+    requestRewrite(searchQuery, context, rewriter, prior_turn)
 
 });
 
@@ -59,9 +61,9 @@ $(G_rewriteButton).click(function() {
     var searchQuery = $(G_activeSearchBar).val();
     var context = $(G_context).val();
     var rewriter = $(G_rewriter).val();
-    var turnsToUse = $(G_turnsToUse).val();
+    var priorTurn = $(G_priorTurn).val();
 
-    requestRewrite(searchQuery, context, rewriter, turnsToUse)
+    requestRewrite(searchQuery, context, rewriter, priorTurn)
 });
 
 
@@ -75,7 +77,7 @@ $(G_rewriteLogsButton).click(function() {
 })
 
 
-function requestRewrite(searchQuery, context, rewriter, turnsToUse) {
+function requestRewrite(searchQuery, context, rewriter, priorTurn) {
 
     if (searchQuery == "") {
         alert("There's no content in the Search Bar");
@@ -93,7 +95,7 @@ function requestRewrite(searchQuery, context, rewriter, turnsToUse) {
             'searchQuery': searchQuery,
             'context' : context,
             'rewriter': rewriter,
-            'turnsToUse' : turnsToUse
+            'priorTurn' : priorTurn
         }),
         success: function (results) {
             console.log(results.rewrite);

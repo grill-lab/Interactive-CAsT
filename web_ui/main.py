@@ -67,6 +67,7 @@ def search():
     search_query = SearchQuery()
     search_query.query = args["query"].replace("_", " ")
     search_query.num_hits = int(args["numDocs"])
+    search_query.search_parameters.parameters["passage_size"] = args["passageSize"]
     search_query.search_parameters.parameters["b"] = args["b"]
     search_query.search_parameters.parameters["k1"] = args["k1"]
 
@@ -74,31 +75,31 @@ def search():
 
     if args["searcherType"] == "sparse":
         search_query.searcher_type = 0
-    elif args["searcherType"] == "dense":
-        search_query.searcher_type = 1
-    elif args["searcherType"] == "hybrid":
-        search_query.searcher_type = 2
+    # elif args["searcherType"] == "dense":
+    #     search_query.searcher_type = 1
+    # elif args["searcherType"] == "hybrid":
+    #     search_query.searcher_type = 2
     
     if args["collection"] == "ALL":
         search_query.search_parameters.collection = 0
-    # elif args["collection"] == "KILT":
-    #     search_query.search_parameters.collection = 1
-    # elif args["collection"] == "MARCO":
-    #     search_query.search_parameters.collection = 2
-    # elif args["collection"] == "WAPO":
-    #     search_query.search_parameters.collection = 3
+    elif args["collection"] == "KILT":
+        search_query.search_parameters.collection = 1
+    elif args["collection"] == "MARCO":
+        search_query.search_parameters.collection = 2
+    elif args["collection"] == "WAPO":
+        search_query.search_parameters.collection = 3
 
     start_time = time.time()
     search_result = search_client.search(search_query)
 
-    passage_limit = int(args["passageCount"])
+    passage_count = int(args["passageCount"])
 
     if args["skipRerank"] == "true":
         
         documents = []
         for document in search_result.documents:
             converted_document = MessageToDict(document)
-            converted_document['passages'] = converted_document['passages'][:passage_limit]
+            converted_document['passages'] = converted_document['passages'][:passage_count]
             documents.append(converted_document)
         
         end_time = time.time()
@@ -118,7 +119,7 @@ def search():
     documents = []
     for document in rerank_result.documents:
         converted_document = MessageToDict(document)
-        converted_document['passages'] = converted_document['passages'][:passage_limit]
+        converted_document['passages'] = converted_document['passages'][:passage_count]
         documents.append(converted_document)
         
     end_time = time.time()
@@ -138,12 +139,12 @@ def rewrite():
         
     rewrite_request.search_query = client_rewrite_request["searchQuery"]
 
-    if client_rewrite_request["turnsToUse"] == "raw":
+    if client_rewrite_request["priorTurn"] == "raw":
         rewrite_request.query_context = client_rewrite_request["context"]
         
     else:
         rewrite_request.query_context = context_converter(client_rewrite_request["context"], 
-            int(client_rewrite_request["turnsToUse"]))
+            client_rewrite_request["priorTurn"])
         
 
     if client_rewrite_request["rewriter"] == "T5":

@@ -18,10 +18,10 @@ class SearcherSelector(AbstractSearcher):
         
         if search_query.searcher_type == 0:
             self.chosen_searcher = self.searchers["SPARSE"]
-        elif search_query.searcher_type == 1:
-            self.chosen_searcher = self.searchers["DENSE"]
-        elif search_query.searcher_type == 2:
-            self.chosen_searcher = self.searchers["HYBRID"]
+        # elif search_query.searcher_type == 1:
+        #     self.chosen_searcher = self.searchers["DENSE"]
+        # elif search_query.searcher_type == 2:
+        #     self.chosen_searcher = self.searchers["HYBRID"]
         
         return self.chosen_searcher.search(search_query, context)
     
