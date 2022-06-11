@@ -8,7 +8,7 @@ class SystemConversationNode(AbstractConversationNode):
         response_type,
         parent_node = None,
         children_nodes = None,
-        results: List = []) -> None:
+        results = None) -> None:
 
         super().__init__(
             node_id=node_id, 

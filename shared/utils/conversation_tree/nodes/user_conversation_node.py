@@ -9,8 +9,8 @@ class UserConversationNode(AbstractConversationNode):
         utterance_type,
         parent_node = None,
         children_nodes =  None,
-        query_turn_dependence: List = [],
-        result_turn_dependence: List = [],
+        query_turn_dependence = None,
+        result_turn_dependence = None,
         ) -> None:
 
         super().__init__(
