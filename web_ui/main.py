@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+# from flask import Flask, render_template, request
 import os
 
 import time
@@ -7,6 +7,7 @@ import logging
 import sys
 import grpc
 
+from tqdm import tqdm
 sys.path.insert(0, '/shared')
 sys.path.insert(0, '/shared/compiled_protobufs')
 
@@ -18,13 +19,14 @@ from searcher_pb2_grpc import SearcherStub
 from reranker_pb2 import RerankRequest
 from reranker_pb2_grpc import RerankerStub
 
-from rewriter_pb2 import RewriteRequest
-from rewriter_pb2_grpc import RewriterStub
+# from rewriter_pb2 import RewriteRequest
+# from rewriter_pb2_grpc import RewriterStub
+
+from summariser_pb2 import SummaryRequest
+from summariser_pb2_grpc import SummariserStub
 
 from utils.conversion_utils import context_converter
 from google.protobuf.json_format import MessageToDict
-
-app = Flask(__name__)
 
 
 searcher_channel = grpc.insecure_channel(os.environ['SEARCHER_URL'])
@@ -33,132 +35,83 @@ search_client = SearcherStub(searcher_channel)
 reranker_channel = grpc.insecure_channel(os.environ['RERANKER_URL'])
 rerank_client = RerankerStub(reranker_channel)
 
-rewriter_channel = grpc.insecure_channel(os.environ['REWRITER_URL'])
-rewrite_client = RewriterStub(rewriter_channel)
+# rewriter_channel = grpc.insecure_channel(os.environ['REWRITER_URL'])
+# rewrite_client = RewriterStub(rewriter_channel)
 
-@app.route('/')
-def display_homepage():
-    return render_template("homepage.html")
+summariser_channel = grpc.insecure_channel(os.environ['SUMMARISER_URL'])
+summariser_client = SummariserStub(summariser_channel)
 
-@app.route('/<id>/fulltext')
-def display_doc(id):
+topics_file = "/shared/data/2022_evaluation_topics_flattened_duplicated_v1.0.json"
+field = 'manual_rewritten_utterance'
+run_name = "BM25_T5_BART"
+run_type = "manual"
 
-    args = request.args
-    document_query = DocumentQuery()
+with open(topics_file) as f:
+    topics = json.load(f)
 
-    if args.get("search_backend"):
-        if args["search_backend"] == "pyserini":
-            document_query.searcher_type = 0
-    
-    document_query.document_id = id
-    retrieved_document = search_client.get_document(document_query)
+# seen topics
+seen_topics = set()
 
-    converted_document = MessageToDict(retrieved_document)
+# initialise run dict
+run_dict = {
+    "run_name" : run_name,
+    "run_type" : run_type,
+    "turns": []
+}
 
-    return render_template("fulltext.html", doc = converted_document)
+search_query = SearchQuery()
+search_query.num_hits = 100
+search_query.search_parameters.parameters["b"] = "0.82"
+search_query.search_parameters.parameters["k1"] = "4.46"
 
+for topic in tqdm(topics):
+    for turn in topic['turn']:
+        global_turn_number = f"{topic['number']}_{turn['number']}"
+        if global_turn_number in seen_topics:
+            continue
+        else:
+            response_dict = {
+                "turn_id" : global_turn_number,
+                "responses" : []
+            }
+            # search
+            search_query.query = turn[field]
+            search_result = search_client.search(search_query)
+            print(f"Search completed for {global_turn_number}")
 
-
-@app.route('/search')
-def search():
-    
-    args = request.args
-
-    search_query = SearchQuery()
-    search_query.query = args["query"].replace("_", " ")
-    search_query.num_hits = int(args["numDocs"])
-    search_query.search_parameters.parameters["passage_size"] = args["passageSize"]
-    search_query.search_parameters.parameters["b"] = args["b"]
-    search_query.search_parameters.parameters["k1"] = args["k1"]
-
-    print(args["searcherType"])
-
-    if args["searcherType"] == "sparse":
-        search_query.searcher_type = 0
-    # elif args["searcherType"] == "dense":
-    #     search_query.searcher_type = 1
-    # elif args["searcherType"] == "hybrid":
-    #     search_query.searcher_type = 2
-    
-    if args["collection"] == "ALL":
-        search_query.search_parameters.collection = 0
-    elif args["collection"] == "KILT":
-        search_query.search_parameters.collection = 1
-    elif args["collection"] == "MARCO":
-        search_query.search_parameters.collection = 2
-    elif args["collection"] == "WAPO":
-        search_query.search_parameters.collection = 3
-
-    start_time = time.time()
-    search_result = search_client.search(search_query)
-
-    passage_count = int(args["passageCount"])
-
-    if args["skipRerank"] == "true":
-        
-        documents = []
-        for document in search_result.documents:
-            converted_document = MessageToDict(document)
-            converted_document['passages'] = converted_document['passages'][:passage_count]
-            documents.append(converted_document)
-        
-        end_time = time.time()
-        duration = int(end_time - start_time)
-        
-        return render_template("results.html", docs = documents, 
-            numFound=len(documents), duration=duration, query=search_query.query)
-    
-    rerank_request = RerankRequest()
-    rerank_request.search_query = search_query.query
-
-    rerank_request.num_passages = int(args["passageLimit"])
-    rerank_request.search_result.MergeFrom(search_result)
-
-    rerank_result = rerank_client.rerank(rerank_request)
-    
-    documents = []
-    for document in rerank_result.documents:
-        converted_document = MessageToDict(document)
-        converted_document['passages'] = converted_document['passages'][:passage_count]
-        documents.append(converted_document)
-        
-    end_time = time.time()
-    duration = int(end_time - start_time)
-        
-    return render_template("results.html", docs = documents, 
-        numFound=len(documents), duration=duration, query=search_query.query)
+            # rerank
+            rerank_request = RerankRequest()
+            rerank_request.search_query = search_query.query
 
 
-@app.route('/rewrite', methods=['POST'])
-def rewrite():
+            rerank_request.num_passages = 1000
+            rerank_request.search_result.MergeFrom(search_result)
+            rerank_result = rerank_client.rerank(rerank_request)
+            print(f"Ranking completed for {global_turn_number}")
 
-    client_rewrite_request = request.get_data()
-    client_rewrite_request = json.loads(client_rewrite_request)
+            # summarise
+            summary_request = SummaryRequest()
+            summary_request.rerank_result.MergeFrom(rerank_result)
+            summary_request.num_passages = 3
+            summary_result = summariser_client.summarise(summary_request)
+            print(f"Summary generated for {global_turn_number}")
 
-    rewrite_request = RewriteRequest()
-        
-    rewrite_request.search_query = client_rewrite_request["searchQuery"]
+            # demo only has one response
+            response_dict['responses'].append({
+                "text" : summary_result.summary,
+                "rank" : 1,
+                "provenance" : [
+                    {
+                        "id" : passage.id,
+                        "text": passage.body,
+                        "score": passage.score
+                    }
+                    for passage in rerank_result.passages
+                ]
+            })
 
-    if client_rewrite_request["priorTurn"] == "raw":
-        rewrite_request.query_context = client_rewrite_request["context"]
-        
-    else:
-        rewrite_request.query_context = context_converter(client_rewrite_request["context"], 
-            client_rewrite_request["priorTurn"])
-        
+            run_dict['turns'].append(response_dict)
+            seen_topics.add(global_turn_number)
 
-    if client_rewrite_request["rewriter"] == "T5":
-        rewrite_request.rewriter = 0
-
-    rewrite_result = rewrite_client.rewrite(rewrite_request)
-    
-    return {
-        'rewrite' : rewrite_result.rewrite, 
-        'context' : rewrite_request.query_context
-    }
-
-
-
-
-if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+with open(f"/shared/data/{run_name}_{run_type}.json", "w") as sample_run_file:
+    json.dump(run_dict, sample_run_file, indent=4, ensure_ascii=False)

@@ -6,4 +6,5 @@ faiss-cpu
 torch==1.10.1+cu113
 grpcio
 grpcio_tools
+beautifulsoup4
 lxml

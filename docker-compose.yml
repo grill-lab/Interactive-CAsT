@@ -1,8 +1,8 @@
 version: "3"
 
 services:
-  builder:
-    container_name: builder
+  cast-builder:
+    container_name: cast-builder
     build:
       context: ./
       dockerfile: builder/Dockerfile
@@ -19,32 +19,50 @@ services:
     - ./reranker:/source
     - ./shared:/shared
     depends_on:
-      - builder
+      - cast-builder
       - searcher
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
-              count: 1
+              device_ids: ["0"]
               capabilities: [gpu]
   
-  rewriter:
-    container_name: rewriter
+  # rewriter:
+  #   container_name: rewriter
+  #   build:
+  #     context: ./
+  #     dockerfile: rewriter/Dockerfile
+  #   volumes:
+  #   - ./rewriter:/source
+  #   - ./shared:/shared
+  #   depends_on:
+  #     - cast-builder
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]
+
+  summariser:
+    container_name: summariser
     build:
       context: ./
-      dockerfile: rewriter/Dockerfile
+      dockerfile: summariser/Dockerfile
     volumes:
-    - ./rewriter:/source
+    - ./summariser:/source
     - ./shared:/shared
     depends_on:
-      - builder
+      - cast-builder
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
-              count: 1
+              device_ids: ["1"]
               capabilities: [gpu]
   
   searcher:
@@ -55,8 +73,9 @@ services:
     volumes:
     - ./searcher:/source
     - ./shared:/shared
+    - ../data/cast_y4_files/trecweb_index:/index
     depends_on:
-      - builder
+      - cast-builder
   
   web_ui:
     container_name: web_ui
@@ -67,10 +86,13 @@ services:
       - "5000:5000"
     environment:
       - SEARCHER_URL=searcher:8000
-      - REWRITER_URL=rewriter:8000
+      - SUMMARISER_URL=summariser:8000
       - RERANKER_URL=reranker:8000
     volumes:
     - ./web_ui:/source
     - ./shared:/shared
     depends_on:
+      - cast-builder
       - reranker
+      - searcher
+      - summariser

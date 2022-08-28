@@ -1,0 +1,19 @@
+syntax = "proto3";
+import "reranker.proto";
+
+message SummaryRequest {
+    RerankResult rerank_result = 1;
+    Summariser summariser = 2;
+    enum Summariser {
+        BART = 0;
+    }
+    int64 num_passages = 3;
+}
+
+message SummaryResult {
+    string summary = 1;
+}
+
+service Summariser {
+    rpc summarise(SummaryRequest) returns (SummaryResult) {}
+}

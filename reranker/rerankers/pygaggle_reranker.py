@@ -1,7 +1,7 @@
 from .abstract_reranker import AbstractReranker
 from .pygaggle import MonoT5, MonoBERT, Query, Text
 from search_result_pb2 import SearchResult, Document, Passage
-from reranker_pb2 import RerankRequest
+from reranker_pb2 import RerankRequest, RerankResult
 
 class PygaggleReranker(AbstractReranker):
 
@@ -23,41 +23,25 @@ class PygaggleReranker(AbstractReranker):
             self.chosen_reranker = self.rerankers['BERT']
         
         first_pass_search_result: SearchResult = rerank_request.search_result
-
         num_passages_to_rerank = rerank_request.num_passages
-
-        search_result = SearchResult()
-
+        
+        rerank_result = RerankResult()
         parsed_passages, lookup_dictionary = self.__create_reranker_input(
             first_pass_search_result, num_passages_to_rerank
         )
-
         texts = [ Text(passage[1], {'id': passage[0]}, 0) for passage in parsed_passages]
-
         query = Query(rerank_request.search_query)
 
         reranked_passages = self.chosen_reranker.rerank(query, texts)
+        for passage in reranked_passages:
+            proto_passage = Passage()
+            proto_passage.id = passage.metadata['id']
+            proto_passage.score = passage.score
+            proto_passage.body = passage.text
 
-        reordered_documents = self.__collect_passages(reranked_passages, lookup_dictionary)
-
-        for document in reordered_documents:
-            proto_document = Document()
-
-            for passage in document["passages"]:
-                proto_passage = Passage()
-                proto_passage.id = passage["passage_id"]
-                proto_passage.body = passage["body"]
-                proto_passage.score = passage["score"]
-
-                proto_document.passages.append(proto_passage)
-            
-            proto_document.id = document["id"]
-            proto_document.title = document["title"]
-            proto_document.url = document["url"]
-            
-            search_result.documents.append(proto_document)
-
-        return search_result
+            rerank_result.passages.append(proto_passage)
+        
+        return rerank_result
 
 
     def __create_reranker_input(self, search_result, num_passages_to_rerank):

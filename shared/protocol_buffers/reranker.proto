@@ -12,6 +12,10 @@ message RerankRequest {
     }
 }
 
+message RerankResult {
+    repeated Passage passages = 1;
+}
+
 service Reranker {
-    rpc rerank(RerankRequest) returns (SearchResult) {}
+    rpc rerank(RerankRequest) returns (RerankResult) {}
 }
